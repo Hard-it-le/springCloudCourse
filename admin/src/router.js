@@ -2,7 +2,7 @@ import Vue from "vue"
 import Router from "vue-router"
 import Login from "./views/login.vue"
 import Admin from "./views/admin.vue"
-import Welcome from "./views/admin/welcome.vue"
+/*import Welcome from "./views/admin/welcome.vue"
 import Category from "./views/admin/category.vue"
 import Course from "./views/admin/course.vue"
 import Chapter from "./views/admin/chapter.vue"
@@ -14,7 +14,7 @@ import User from "./views/admin/user.vue"
 import Resource from "./views/admin/resource.vue"
 import Role from "./views/admin/role.vue"
 import Member from "./views/admin/member.vue"
-import Sms from "./views/admin/sms.vue"
+import Sms from "./views/admin/sms.vue"*/
 
 Vue.use(Router);
 
@@ -31,10 +31,10 @@ export default new Router({
         path: "/login",
         component: Login
     }, {
-        path: "/",
+        path: "/admin",
         name: "admin",
         component: Admin,
-        meta: {
+       /* meta: {
             loginRequire: true
         },
         children: [{
@@ -89,6 +89,6 @@ export default new Router({
             path: "system/role",
             name: "system/role",
             component: Role,
-        }]
+        }]*/
     }]
 })
