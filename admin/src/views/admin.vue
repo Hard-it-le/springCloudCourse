@@ -357,7 +357,7 @@
 
         <ul class="nav nav-list">
           <li class="" id="welcome-sidebar">
-            <router-link to="/admin/welcome">
+            <router-link to="/welcome">
               <i class="menu-icon fa fa-tachometer"></i>
               <span class="menu-text"> 欢迎 </span>
             </router-link>
@@ -410,7 +410,7 @@
             <b class="arrow"></b>
             <ul class="submenu">
               <li class="active" id="business-chapter-sidebar">
-                <router-link to="/admin/business/chapter">
+                <router-link to="/business/chapter">
                   <i class="menu-icon fa fa-caret-right"></i>
                   大章管理
                 </router-link>
@@ -549,6 +549,20 @@ export default {
   mounted() {
     $("body").removeClass("login-layout light-login");
     $("body").attr("class", "no-skin");
+    let _this = this;
+    //sidebar激活样式方式二
+    _this.activeSidebar(_this.$route.name.replace("/", "-") + "-sidebar");
+  },
+  watch: {
+    //sidebar激活样式方式二
+    $route: {
+      handler: function (val, oldVal) {
+        let _this = this;
+        _this.$nextTick(function () {
+          _this.activeSidebar(_this.$route.name.replace("/", "-") + "-sidebar");
+        })
+      }
+    }
   },
   methods: {
     /**

@@ -15,7 +15,8 @@ public class ChapterController {
     @Resource
     private ChapterService chapterService;
 
-    public List<ChapterDto> list(){
-        return null;
+    @RequestMapping("/list")
+    public List<ChapterDto> chapter(){
+        return chapterService.list();
     }
 }
