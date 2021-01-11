@@ -8,6 +8,7 @@
         <module>system</module>
         <module>gateWay</module>
         <module>server</module>
+        <module>business</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
