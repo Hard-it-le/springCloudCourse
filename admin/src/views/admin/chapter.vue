@@ -154,7 +154,8 @@ export default {
         name:_this.course.name
       }).then(saveRes => {
         console.info(saveRes);
-        $("#exampleModal").modal('hide');
+        $("#addModal").modal('hide');
+        _this.getList(1);
       }).catch(saveEx => {
         console.info(saveEx);
       });
@@ -168,8 +169,8 @@ export default {
         page: page,
         size: _this.$refs.pagination.size,
       }).then((listRes) => {
-        _this.chapters = listRes.data.list;
-        _this.$refs.pagination.render(page, listRes.data.total);
+        _this.chapters = listRes.data.content.list;
+        _this.$refs.pagination.render(page, listRes.data.content.total);
       }).catch(ex => {
       });
     },

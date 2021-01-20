@@ -2,6 +2,7 @@ package com.course.business.controller.admin;
 
 import com.course.server.dto.ChapterDto;
 import com.course.server.dto.PageDto;
+import com.course.server.dto.ResponseDto;
 import com.course.server.service.ChapterService;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,21 +17,31 @@ public class ChapterController {
     @Resource
     private ChapterService chapterService;
 
+
     /**
      * 查询章节列表
+     *
      * @param pageDto
      * @return
      */
     @RequestMapping("/list")
-    public PageDto chapter(@RequestBody PageDto pageDto) {
+    public ResponseDto chapter(@RequestBody PageDto pageDto) {
+        ResponseDto responseDto = new ResponseDto();
         chapterService.list(pageDto);
-        return pageDto;
+        responseDto.setContent(pageDto);
+        return responseDto;
     }
 
+    /**
+     * 新增章节
+     * @param chapterDto
+     * @return
+     */
     @RequestMapping("/save")
-    public  ChapterDto save(@RequestBody ChapterDto chapterDto){
-        System.out.println(chapterDto);
+    public ResponseDto save(@RequestBody ChapterDto chapterDto) {
+        ResponseDto responseDto = new ResponseDto();
         chapterService.save(chapterDto);
-        return chapterDto;
+        responseDto.setContent(chapterDto);
+        return responseDto;
     }
 }
