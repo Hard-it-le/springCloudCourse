@@ -1,9 +1,7 @@
 package com.course.server.service;
 
-import java.util.List;
+import com.course.server.dto.PageDto;
 
-public interface ChapterService  {
-
-
-      List  list();
+public interface ChapterService {
+      void list(PageDto pageDto);
 }
