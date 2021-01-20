@@ -41,6 +41,36 @@
       </div>
     </div>
 
+    <!--编辑章节列表模态框 -->
+    <div class="modal fade" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="updateModalLabel">修改章节</h4>
+          </div>
+          <div class="modal-body">
+            <form>
+              <div class="form-group">
+                <label for="course-updateName" class="control-label">课程名称</label>
+                <input v-model="course.name" type="text" class="form-control" id="course-updateName" placeholder="课程名称">
+              </div>
+              <div class="form-group">
+                <label for="course-updateId" class="control-label">课程ID</label>
+                <input type="number" v-model="course.courseId" class="form-control" id="course-updateId"
+                       placeholder="课程ID">
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            <button type="button" class="btn btn-primary" @click="updateCourse()">确认</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
 
     <!-- 分页组件的使用 -->
     <pagination ref="pagination" v-bind:list="getList" v-bind:itemCount="5"></pagination>
@@ -61,58 +91,13 @@
         <td>{{ chapter.name }}</td>
         <td>{{ chapter.courseId }}</td>
         <td>
-          <div class="hidden-sm hidden-xs btn-group">
-            <button class="btn btn-xs btn-success">
-              <i class="ace-icon fa fa-check bigger-120"></i>
-            </button>
-
-            <button class="btn btn-xs btn-info">
+          <div class="btn-group">
+            <button class="btn btn-xs btn-info" @click="update(chapter)">
               <i class="ace-icon fa fa-pencil bigger-120"></i>
             </button>
-
-            <button class="btn btn-xs btn-danger">
+            <button class="btn btn-xs btn-danger" @click="del(chapter.id)">
               <i class="ace-icon fa fa-trash-o bigger-120"></i>
             </button>
-
-            <button class="btn btn-xs btn-warning">
-              <i class="ace-icon fa fa-flag bigger-120"></i>
-            </button>
-          </div>
-
-          <div class="hidden-md hidden-lg">
-            <div class="inline pos-rel">
-              <button class="btn btn-minier btn-primary dropdown-toggle" data-toggle="dropdown"
-                      data-position="auto">
-                <i class="ace-icon fa fa-cog icon-only bigger-110"></i>
-              </button>
-
-              <ul
-                  class="dropdown-menu dropdown-only-icon dropdown-yellow dropdown-menu-right dropdown-caret dropdown-close">
-                <li>
-                  <a href="#" class="tooltip-info" data-rel="tooltip" title="View">
-																			<span class="blue">
-																				<i class="ace-icon fa fa-search-plus bigger-120"></i>
-																			</span>
-                  </a>
-                </li>
-
-                <li>
-                  <a href="#" class="tooltip-success" data-rel="tooltip" title="Edit">
-																			<span class="green">
-																				<i class="ace-icon fa fa-pencil-square-o bigger-120"></i>
-																			</span>
-                  </a>
-                </li>
-
-                <li>
-                  <a href="#" class="tooltip-error" data-rel="tooltip" title="Delete">
-																			<span class="red">
-																				<i class="ace-icon fa fa-trash-o bigger-120"></i>
-																			</span>
-                  </a>
-                </li>
-              </ul>
-            </div>
           </div>
         </td>
       </tr>
@@ -133,6 +118,7 @@ export default {
     return {
       chapters: {},
       course: {},
+
     }
   },
   mounted() {
@@ -141,6 +127,46 @@ export default {
     _this.getList(1);
   },
   methods: {
+
+    //打开编辑模态框
+    update(chapter) {
+      $("#updateModal").modal('show');
+      let _this = this;
+      _this.course = $.extend({}, chapter);
+    },
+    //修改章节并关闭模态框
+    updateCourse() {
+      let _this = this;
+      _this.$ajax.post("http://127.0.0.1:9000/business/admin/chapter/edit", {
+        id: _this.course.id,
+        courseId: _this.course.courseId,
+        name: _this.course.name
+      }).then(updateRes => {
+        if (null != updateRes && null != updateRes.data && updateRes.data.success) {
+          $("#updateModal").modal('hide');
+          _this.getList(1);
+        }
+      }).catch(updateEx => {
+        console.info(updateEx);
+      });
+    },
+
+
+    //删除章节目录
+    del(delId) {
+      console.info(delId);
+      let _this = this;
+      var id = delId;
+      _this.$ajax.delete("http://127.0.0.1:9000/business/admin/chapter/delete/" + id).then(deleteRes => {
+        if (null != deleteRes && null != deleteRes.data && deleteRes.data.success) {
+          _this.getList(1);
+        }
+      }).catch(deleteEx => {
+        console.info(deleteEx);
+      });
+    },
+
+
     //打开模态框
     add() {
       $("#addModal").modal('show');
@@ -151,11 +177,12 @@ export default {
       console.info(_this.course);
       _this.$ajax.post("http://127.0.0.1:9000/business/admin/chapter/save", {
         courseId: _this.course.courseId,
-        name:_this.course.name
+        name: _this.course.name
       }).then(saveRes => {
-        console.info(saveRes);
-        $("#addModal").modal('hide');
-        _this.getList(1);
+        if (null != saveRes && null != saveRes.data && saveRes.data.success) {
+          $("#addModal").modal('hide');
+          _this.getList(1);
+        }
       }).catch(saveEx => {
         console.info(saveEx);
       });

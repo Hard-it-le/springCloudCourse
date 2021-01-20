@@ -8,4 +8,8 @@ public interface ChapterService {
 
 
       void save(ChapterDto chapterDto);
+
+      void  delete(String id);
+
+      void edit(ChapterDto chapterDto);
 }

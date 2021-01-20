@@ -4,9 +4,7 @@ import com.course.server.dto.ChapterDto;
 import com.course.server.dto.PageDto;
 import com.course.server.dto.ResponseDto;
 import com.course.server.service.ChapterService;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 
@@ -44,4 +42,33 @@ public class ChapterController {
         responseDto.setContent(chapterDto);
         return responseDto;
     }
+
+    /**
+     * 删除章节
+     * @param id
+     * @return
+     */
+    @DeleteMapping("/delete/{id}")
+    public ResponseDto delete(@PathVariable("id") String id) {
+        ResponseDto responseDto = new ResponseDto();
+        chapterService.delete(id);
+        responseDto.setContent(id);
+        return responseDto;
+    }
+
+    /**
+     * 根据id修改章节
+     * @param chapterDto
+     * @return
+     */
+    @RequestMapping(value = "/edit")
+    public  ResponseDto edit(@RequestBody ChapterDto chapterDto){
+        ResponseDto responseDto= new ResponseDto();
+        chapterService.edit(chapterDto);
+        responseDto.setContent(chapterDto);
+        return  responseDto;
+    }
+
+
+
 }
