@@ -5,6 +5,8 @@ import com.course.server.dto.PageDto;
 import com.course.server.dto.ResponseDto;
 import com.course.server.service.ChapterService;
 import com.course.server.utils.ValidatorUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -12,6 +14,8 @@ import javax.annotation.Resource;
 @RestController
 @RequestMapping("/admin/chapter")
 public class ChapterController {
+    private static final Logger LOG = LoggerFactory.getLogger(ChapterController.class);
+    public static final String BUSINESS_NAME = "大章";
 
     @Resource
     private ChapterService chapterService;
@@ -39,10 +43,14 @@ public class ChapterController {
      */
     @RequestMapping("/save")
     public ResponseDto save(@RequestBody ChapterDto chapterDto) {
-        //后台为空或者长度不等于校验
-        ValidatorUtil.require(chapterDto.getName(),"名称");
-        ValidatorUtil.require(chapterDto.getCourseId(),"课程id");
-        ValidatorUtil.length(chapterDto.getCourseId(),"课程长度",1,8);
+
+        if (chapterDto != null){
+            // 保存校验
+            ValidatorUtil.require(chapterDto.getName(), "名称");
+            ValidatorUtil.require(chapterDto.getCourseId(), "课程ID");
+            ValidatorUtil.length(chapterDto.getCourseId(), "课程ID", 1, 8);
+        }
+
         ResponseDto responseDto = new ResponseDto();
         chapterService.save(chapterDto);
         responseDto.setContent(chapterDto);

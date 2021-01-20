@@ -179,6 +179,7 @@ export default {
     saveCourse() {
       let _this = this;
       Loading.show();
+      console.info(_this.course);
       _this.$ajax.post("http://127.0.0.1:9000/business/admin/chapter/save", {
         courseId: _this.course.courseId,
         name: _this.course.name
