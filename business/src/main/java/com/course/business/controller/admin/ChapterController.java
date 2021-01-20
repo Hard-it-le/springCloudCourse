@@ -1,5 +1,6 @@
 package com.course.business.controller.admin;
 
+import com.course.server.dto.ChapterDto;
 import com.course.server.dto.PageDto;
 import com.course.server.service.ChapterService;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,9 +16,21 @@ public class ChapterController {
     @Resource
     private ChapterService chapterService;
 
+    /**
+     * 查询章节列表
+     * @param pageDto
+     * @return
+     */
     @RequestMapping("/list")
     public PageDto chapter(@RequestBody PageDto pageDto) {
         chapterService.list(pageDto);
         return pageDto;
+    }
+
+    @RequestMapping("/save")
+    public  ChapterDto save(@RequestBody ChapterDto chapterDto){
+        System.out.println(chapterDto);
+        chapterService.save(chapterDto);
+        return chapterDto;
     }
 }

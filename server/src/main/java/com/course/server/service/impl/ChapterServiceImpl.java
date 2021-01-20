@@ -6,6 +6,7 @@ import com.course.server.dto.ChapterDto;
 import com.course.server.dto.PageDto;
 import com.course.server.mapper.ChapterMapper;
 import com.course.server.service.ChapterService;
+import com.course.server.utils.UuidUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.BeanUtils;
@@ -21,6 +22,10 @@ public class ChapterServiceImpl implements ChapterService {
     @Resource
     private ChapterMapper chapterMapper;
 
+    /**
+     * 查询列表
+     * @param pageDto
+     */
     @Override
     public void list(PageDto pageDto) {
         PageHelper.startPage(pageDto.getPage(), pageDto.getSize());
@@ -37,6 +42,19 @@ public class ChapterServiceImpl implements ChapterService {
         }
             pageDto.setList(chapterDtoList);
     }
+
+    /**
+     * 添加章节目录
+     * @param chapterDto
+     */
+    @Override
+    public void save(ChapterDto chapterDto) {
+        chapterDto.setId(UuidUtil.getShortUuid());
+        Chapter chapter = new Chapter();
+        BeanUtils.copyProperties(chapterDto,chapter);
+        chapterMapper.insert(chapter);
+    }
+
 
 
 }
