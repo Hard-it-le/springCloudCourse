@@ -137,12 +137,14 @@ export default {
     //修改章节并关闭模态框
     updateCourse() {
       let _this = this;
+      Loading.show();
       _this.$ajax.post("http://127.0.0.1:9000/business/admin/chapter/edit", {
         id: _this.course.id,
         courseId: _this.course.courseId,
         name: _this.course.name
       }).then(updateRes => {
         if (null != updateRes && null != updateRes.data && updateRes.data.success) {
+          Loading.hide();
           $("#updateModal").modal('hide');
           _this.getList(1);
         }
@@ -157,8 +159,10 @@ export default {
       console.info(delId);
       let _this = this;
       var id = delId;
+      Loading.show();
       _this.$ajax.delete("http://127.0.0.1:9000/business/admin/chapter/delete/" + id).then(deleteRes => {
         if (null != deleteRes && null != deleteRes.data && deleteRes.data.success) {
+          Loading.hide();
           _this.getList(1);
         }
       }).catch(deleteEx => {
@@ -174,14 +178,17 @@ export default {
     //添加章节目录并关闭模态框
     saveCourse() {
       let _this = this;
-      console.info(_this.course);
+      Loading.show();
       _this.$ajax.post("http://127.0.0.1:9000/business/admin/chapter/save", {
         courseId: _this.course.courseId,
         name: _this.course.name
       }).then(saveRes => {
+        Loading.hide();
         if (null != saveRes && null != saveRes.data && saveRes.data.success) {
           $("#addModal").modal('hide');
           _this.getList(1);
+        }else{
+          console.info(saveRes.data.message);
         }
       }).catch(saveEx => {
         console.info(saveEx);
@@ -192,10 +199,12 @@ export default {
     //查询大章列表
     getList(page) {
       let _this = this;
+      Loading.show();
       _this.$ajax.post("http://127.0.0.1:9000/business/admin/chapter/list", {
         page: page,
         size: _this.$refs.pagination.size,
       }).then((listRes) => {
+        Loading.hide();
         _this.chapters = listRes.data.content.list;
         _this.$refs.pagination.render(page, listRes.data.content.total);
       }).catch(ex => {
