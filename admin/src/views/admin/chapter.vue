@@ -123,6 +123,7 @@ export default {
   },
   mounted() {
     let _this = this;
+    //设置分页条数为5条
     _this.$refs.pagination.size = 5;
     _this.getList(1);
   },
@@ -143,10 +144,12 @@ export default {
         courseId: _this.course.courseId,
         name: _this.course.name
       }).then(updateRes => {
+        Loading.hide();
         if (null != updateRes && null != updateRes.data && updateRes.data.success) {
-          Loading.hide();
           $("#updateModal").modal('hide');
           _this.getList(1);
+        } else {
+          alert("参数不能为空");
         }
       }).catch(updateEx => {
         console.info(updateEx);
@@ -156,14 +159,15 @@ export default {
 
     //删除章节目录
     del(delId) {
-      console.info(delId);
       let _this = this;
       var id = delId;
       Loading.show();
       _this.$ajax.delete("http://127.0.0.1:9000/business/admin/chapter/delete/" + id).then(deleteRes => {
+        Loading.hide();
         if (null != deleteRes && null != deleteRes.data && deleteRes.data.success) {
-          Loading.hide();
           _this.getList(1);
+        }else {
+          alert("删除失败请稍后再试");
         }
       }).catch(deleteEx => {
         console.info(deleteEx);
@@ -179,7 +183,6 @@ export default {
     saveCourse() {
       let _this = this;
       Loading.show();
-      console.info(_this.course);
       _this.$ajax.post("http://127.0.0.1:9000/business/admin/chapter/save", {
         courseId: _this.course.courseId,
         name: _this.course.name
@@ -188,8 +191,8 @@ export default {
         if (null != saveRes && null != saveRes.data && saveRes.data.success) {
           $("#addModal").modal('hide');
           _this.getList(1);
-        }else{
-          console.info(saveRes.data.message);
+        } else {
+          alert(saveRes.data.message);
         }
       }).catch(saveEx => {
         console.info(saveEx);
@@ -209,6 +212,7 @@ export default {
         _this.chapters = listRes.data.content.list;
         _this.$refs.pagination.render(page, listRes.data.content.total);
       }).catch(ex => {
+        alert("网络异常请重新登录");
       });
     },
   },

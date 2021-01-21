@@ -44,12 +44,10 @@ public class ChapterController {
     @RequestMapping("/save")
     public ResponseDto save(@RequestBody ChapterDto chapterDto) {
 
-        if (chapterDto != null){
-            // 保存校验
-            ValidatorUtil.require(chapterDto.getName(), "名称");
-            ValidatorUtil.require(chapterDto.getCourseId(), "课程ID");
-            ValidatorUtil.length(chapterDto.getCourseId(), "课程ID", 1, 8);
-        }
+        // 保存校验
+        ValidatorUtil.require(chapterDto.getName(), "名称");
+        ValidatorUtil.require(chapterDto.getCourseId(), "课程ID");
+        ValidatorUtil.length(chapterDto.getCourseId(), "课程ID", 1, 8);
 
         ResponseDto responseDto = new ResponseDto();
         chapterService.save(chapterDto);
@@ -71,6 +69,8 @@ public class ChapterController {
         return responseDto;
     }
 
+
+
     /**
      * 根据id修改章节
      *
@@ -79,6 +79,10 @@ public class ChapterController {
      */
     @RequestMapping(value = "/edit")
     public ResponseDto edit(@RequestBody ChapterDto chapterDto) {
+        // 保存校验
+        ValidatorUtil.require(chapterDto.getName(), "名称");
+        ValidatorUtil.require(chapterDto.getCourseId(), "课程ID");
+        ValidatorUtil.length(chapterDto.getCourseId(), "课程ID", 1, 8);
         ResponseDto responseDto = new ResponseDto();
         chapterService.edit(chapterDto);
         responseDto.setContent(chapterDto);
