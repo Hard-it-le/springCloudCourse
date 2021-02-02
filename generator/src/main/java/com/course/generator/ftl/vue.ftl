@@ -17,24 +17,32 @@
     <table id="simple-table" class="table  table-bordered table-hover">
       <thead>
       <tr>
-        <th>id</th>
-        <th>课程id</th>
-        <th>名称</th>
+<#list fieldList as field>
+          <#if field.nameHump!="createdAt" && field.nameHump!="updatedAt">
+        <th>${field.nameCn}</th>
+          </#if>
+        </#list>
         <th>操作</th>
       </tr>
       </thead>
 
       <tbody>
-      <tr v-for="chapter in chapters">
-        <td>{{chapter.id}}</td>
-        <td>{{chapter.courseId}}</td>
-        <td>{{chapter.name}}</td>
+      <tr v-for="${domain} in ${domain}s">
+        <#list fieldList as field>
+          <#if field.nameHump!="createdAt" && field.nameHump!="updatedAt">
+            <#if field.enums>
+        <td>{{${field.enumsConst} | optionKV(${domain}.${field.nameHump})}}</td>
+            <#else>
+        <td>{{${domain}.${field.nameHump}}}</td>
+            </#if>
+          </#if>
+        </#list>
       <td>
         <div class="hidden-sm hidden-xs btn-group">
-          <button v-on:click="edit(chapter)" class="btn btn-xs btn-info">
+          <button v-on:click="edit(${domain})" class="btn btn-xs btn-info">
             <i class="ace-icon fa fa-pencil bigger-120"></i>
           </button>
-          <button v-on:click="del(chapter.id)" class="btn btn-xs btn-danger">
+          <button v-on:click="del(${domain}.id)" class="btn btn-xs btn-danger">
             <i class="ace-icon fa fa-trash-o bigger-120"></i>
           </button>
         </div>
@@ -52,18 +60,27 @@
           </div>
           <div class="modal-body">
             <form class="form-horizontal">
+              <#list fieldList as field>
+                <#if field.name!="id" && field.nameHump!="createdAt" && field.nameHump!="updatedAt">
+                  <#if field.enums>
               <div class="form-group">
-                <label class="col-sm-2 control-label">课程id</label>
+                <label class="col-sm-2 control-label">${field.nameCn}</label>
                 <div class="col-sm-10">
-                  <input v-model="chapter.courseId" class="form-control">
+                  <select v-model="${domain}.${field.nameHump}" class="form-control">
+                    <option v-for="o in ${field.enumsConst}" v-bind:value="o.key">{{o.value}}</option>
+                  </select>
                 </div>
               </div>
+                  <#else>
               <div class="form-group">
-                <label class="col-sm-2 control-label">名称</label>
+                <label class="col-sm-2 control-label">${field.nameCn}</label>
                 <div class="col-sm-10">
-                  <input v-model="chapter.name" class="form-control">
+                  <input v-model="${domain}.${field.nameHump}" class="form-control">
                 </div>
               </div>
+                  </#if>
+                </#if>
+              </#list>
             </form>
           </div>
           <div class="modal-footer">
@@ -80,11 +97,16 @@
   import Pagination from "../../components/pagination";
   export default {
     components: {Pagination},
-    name: "business-chapter",
+    name: "${module}-${domain}",
     data: function() {
       return {
-        chapter: {},
-        chapters: [],
+        ${domain}: {},
+        ${domain}s: [],
+        <#list fieldList as field>
+          <#if field.enums>
+        ${field.enumsConst}: ${field.enumsConst},
+          </#if>
+        </#list>
       }
     },
     mounted: function() {
@@ -92,7 +114,7 @@
       _this.$refs.pagination.size = 5;
       _this.list(1);
       // sidebar激活样式方法一
-      // this.$parent.activeSidebar("business-chapter-sidebar");
+      // this.$parent.activeSidebar("${module}-${domain}-sidebar");
 
     },
     methods: {
@@ -101,16 +123,16 @@
        */
       add() {
         let _this = this;
-        _this.chapter = {};
+        _this.${domain} = {};
         $("#form-modal").modal("show");
       },
 
       /**
        * 点击【编辑】
        */
-      edit(chapter) {
+      edit(${domain}) {
         let _this = this;
-        _this.chapter = $.extend({}, chapter);
+        _this.${domain} = $.extend({}, ${domain});
         $("#form-modal").modal("show");
       },
 
@@ -120,13 +142,13 @@
       list(page) {
         let _this = this;
         Loading.show();
-        _this.$ajax.post(process.env.VUE_APP_SERVER + '/business/admin/chapter/list', {
+        _this.$ajax.post(process.env.VUE_APP_SERVER + '/${module}/admin/${domain}/list', {
           page: page,
           size: _this.$refs.pagination.size,
         }).then((response)=>{
           Loading.hide();
           let resp = response.data;
-          _this.chapters = resp.content.list;
+          _this.${domain}s = resp.content.list;
           _this.$refs.pagination.render(page, resp.content.total);
 
         })
@@ -140,13 +162,22 @@
 
         // 保存校验
         if (1 != 1
-          || !Validator.length(_this.chapter.name, "名称", 1, 50)
+        <#list fieldList as field>
+          <#if field.name!="id" && field.nameHump!="createdAt" && field.nameHump!="updatedAt" && field.nameHump!="sort">
+            <#if !field.nullAble>
+          || !Validator.require(_this.${domain}.${field.nameHump}, "${field.nameCn}")
+            </#if>
+            <#if (field.length > 0)>
+          || !Validator.length(_this.${domain}.${field.nameHump}, "${field.nameCn}", 1, ${field.length?c})
+            </#if>
+          </#if>
+        </#list>
         ) {
           return;
         }
 
         Loading.show();
-        _this.$ajax.post(process.env.VUE_APP_SERVER + '/business/admin/chapter/save', _this.chapter).then((response)=>{
+        _this.$ajax.post(process.env.VUE_APP_SERVER + '/${module}/admin/${domain}/save', _this.${domain}).then((response)=>{
           Loading.hide();
           let resp = response.data;
           if (resp.success) {
@@ -164,9 +195,9 @@
        */
       del(id) {
         let _this = this;
-        Confirm.show("删除大章后不可恢复，确认删除？", function () {
+        Confirm.show("删除${tableNameCn}后不可恢复，确认删除？", function () {
           Loading.show();
-          _this.$ajax.delete(process.env.VUE_APP_SERVER + '/business/admin/chapter/delete/' + id).then((response)=>{
+          _this.$ajax.delete(process.env.VUE_APP_SERVER + '/${module}/admin/${domain}/delete/' + id).then((response)=>{
             Loading.hide();
             let resp = response.data;
             if (resp.success) {
