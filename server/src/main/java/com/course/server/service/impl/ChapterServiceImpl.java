@@ -81,6 +81,4 @@ public class ChapterServiceImpl implements ChapterService {
         Chapter chapter= CopyUtil.copy(chapterDto,Chapter.class);
         chapterMapper.updateByPrimaryKey(chapter);
     }
-
-
 }

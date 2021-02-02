@@ -1,17 +1,12 @@
 package com.course.server.dto;
 
 
-public class ChapterDto {
+public class TestDto {
 
     /**
      * id
      */
     private String id;
-
-    /**
-     * 课程id
-     */
-    private String courseId;
 
     /**
      * 名称
@@ -24,14 +19,6 @@ public class ChapterDto {
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    public String getCourseId() {
-        return courseId;
-    }
-
-    public void setCourseId(String courseId) {
-        this.courseId = courseId;
     }
 
     public String getName() {
@@ -50,7 +37,6 @@ public class ChapterDto {
         sb.append(" [");
         sb.append("Hash = ").append(hashCode());
         sb.append(", id=").append(id);
-        sb.append(", courseId=").append(courseId);
         sb.append(", name=").append(name);
         sb.append("]");
         return sb.toString();
