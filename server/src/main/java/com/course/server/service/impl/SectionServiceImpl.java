@@ -2,10 +2,12 @@ package com.course.server.service.impl;
 
 import com.course.server.domain.Section;
 import com.course.server.domain.SectionExample;
-import com.course.server.dto.PageDto;
 import com.course.server.dto.SectionDto;
+import com.course.server.dto.PageDto;
 import com.course.server.mapper.SectionMapper;
 import com.course.server.service.SectionService;
+import com.course.server.utils.CopyUtil;
+import com.course.server.utils.UuidUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.BeanUtils;
@@ -16,30 +18,67 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class  SectionServiceImpl  implements SectionService {
+public class SectionServiceImpl implements SectionService {
 
     @Resource
-    private SectionMapper sectionMapper;
+    private SectionMapper SectionMapper;
 
     /**
-     *小结查询列表
+     * 查询列表
+     *
      * @param pageDto
      */
     @Override
     public void list(PageDto pageDto) {
-        PageHelper.startPage(pageDto.getPage(),pageDto.getSize());
-        SectionExample sectionExample = new SectionExample();
-        List<Section> sectionsList = sectionMapper.selectByExample(sectionExample);
-        PageInfo<Section> pageInfo = new PageInfo<>(sectionsList);
+        PageHelper.startPage(pageDto.getPage(), pageDto.getSize());
+        SectionExample SectionExample = new SectionExample();
+        List<Section> SectionList = SectionMapper.selectByExample(SectionExample);
+        PageInfo<Section> pageInfo = new PageInfo<>(SectionList);
         pageDto.setTotal(pageInfo.getTotal());
-        List<SectionDto> sectionDtoList = new ArrayList<SectionDto>();
-        for (int i = 0; i < sectionsList.size(); i++) {
-            Section section = sectionsList.get(i);
-            SectionDto sectionDto = new SectionDto();
-            BeanUtils.copyProperties(section, sectionDto);
-            sectionDtoList.add(sectionDto);
+        List<SectionDto> SectionDtoList = new ArrayList<SectionDto>();
+        for (int i = 0; i < SectionList.size(); i++) {
+            Section Section = SectionList.get(i);
+            SectionDto SectionDto = new SectionDto();
+            BeanUtils.copyProperties(Section, SectionDto);
+            SectionDtoList.add(SectionDto);
         }
-        pageDto.setList(sectionDtoList);
+        pageDto.setList(SectionDtoList);
+    }
 
+    /**
+     * 添加章节目录
+     *
+     * @param SectionDto
+     */
+    @Override
+    public void save(SectionDto SectionDto) {
+        SectionDto.setId(UuidUtil.getShortUuid());
+        Section Section = new Section();
+        BeanUtils.copyProperties(SectionDto, Section);
+        SectionMapper.insert(Section);
+    }
+
+    /**
+     * 删除
+     *
+     * @param id
+     */
+    @Override
+    public void delete(String id) {
+        SectionMapper.deleteByPrimaryKey(id);
+    }
+
+    /**
+     * 根据id修改章节
+     *
+     * @param SectionDto
+     */
+    @Override
+    public void edit(SectionDto SectionDto) {
+          /*原始方法封装Dto
+          Section Section = new Section();
+        BeanUtils.copyProperties(SectionDto, Section);*/
+        Section Section= CopyUtil.copy(SectionDto,Section.class);
+        SectionMapper.updateByPrimaryKey(Section);
     }
 }
