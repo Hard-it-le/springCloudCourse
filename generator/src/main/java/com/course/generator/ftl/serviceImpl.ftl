@@ -16,6 +16,11 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
+<#list typeSet as type>
+    <#if type == 'Date'>
+import java.util.Date;
+    </#if>
+</#list>
 
 @Service
 public class ${Domain}ServiceImpl implements ${Domain}Service {
@@ -32,6 +37,11 @@ public class ${Domain}ServiceImpl implements ${Domain}Service {
     public void list(PageDto pageDto) {
         PageHelper.startPage(pageDto.getPage(), pageDto.getSize());
         ${Domain}Example ${domain}Example = new ${Domain}Example();
+       <#list fieldList as field>
+            <#if field.nameHump=='sort'>
+        ${domain}Example.setOrderByClause("sort asc");
+            </#if>
+        </#list>
         List<${Domain}> ${domain}List = ${domain}Mapper.selectByExample(${domain}Example);
         PageInfo<${Domain}> pageInfo = new PageInfo<>(${domain}List);
         pageDto.setTotal(pageInfo.getTotal());
@@ -52,6 +62,19 @@ public class ${Domain}ServiceImpl implements ${Domain}Service {
      */
     @Override
     public void save(${Domain}Dto ${domain}Dto) {
+        <#list typeSet as type>
+            <#if type=='Date'>
+        Date now = new Date();
+            </#if>
+        </#list>
+        <#list fieldList as field>
+            <#if field.nameHump=='createdAt'>
+        ${domain}Dto.setCreatedAt(now);
+            </#if>
+            <#if field.nameHump=='updatedAt'>
+        ${domain}Dto.setUpdatedAt(now);
+            </#if>
+        </#list>
         ${domain}Dto.setId(UuidUtil.getShortUuid());
         ${Domain} ${domain} = new ${Domain}();
         BeanUtils.copyProperties(${domain}Dto, ${domain});
@@ -75,8 +98,13 @@ public class ${Domain}ServiceImpl implements ${Domain}Service {
      */
     @Override
     public void edit(${Domain}Dto ${domain}Dto) {
+        <#list fieldList as field>
+            <#if field.nameHump=='updatedAt'>
+        ${domain}Dto.setUpdatedAt(new Date());
+            </#if>
+        </#list>
           /*原始方法封装Dto
-          ${Domain} ${domain} = new ${Domain}();
+        ${Domain} ${domain} = new ${Domain}();
         BeanUtils.copyProperties(${domain}Dto, ${domain});*/
         ${Domain} ${domain}= CopyUtil.copy(${domain}Dto,${Domain}.class);
         ${domain}Mapper.updateByPrimaryKey(${domain});

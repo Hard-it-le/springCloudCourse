@@ -5,7 +5,7 @@ import com.course.server.dto.PageDto;
 
 public interface SectionService {
       void list(PageDto pageDto);
-      void save(SectionDto SectionDto);
+      void save(SectionDto sectionDto);
       void  delete(String id);
-      void edit(SectionDto SectionDto);
+      void edit(SectionDto sectionDto);
 }

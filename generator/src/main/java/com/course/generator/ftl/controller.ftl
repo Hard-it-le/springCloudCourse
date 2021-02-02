@@ -45,9 +45,14 @@ public class ${Domain}Controller {
     public ResponseDto save(@RequestBody ${Domain}Dto ${domain}Dto) {
 
         // 保存校验
-      <#--  ValidatorUtil.require(${domain}Dto.getName(), "名称");
-        ValidatorUtil.require(${domain}Dto.getCourseId(), "课程ID");
-        ValidatorUtil.length(${domain}Dto.getCourseId(), "课程ID", 1, 8);-->
+        <#list fieldList as field>
+            <#if !field.nullAble && field.name != "id" && field.nameHump !="createAt" && field.nameHump !="updateAt">
+        ValidatorUtil.require(${domain}Dto.get${field.nameBigHump}(), "${field.nameCn}");
+            </#if>
+            <#if (field.length > 0)>
+        ValidatorUtil.length(${domain}Dto.get${field.nameBigHump}(), "${field.nameCn}", 1, ${field.length?c});
+            </#if>
+        </#list>
 
         ResponseDto responseDto = new ResponseDto();
         ${domain}Service.save(${domain}Dto);
@@ -80,9 +85,15 @@ public class ${Domain}Controller {
     @RequestMapping(value = "/edit")
     public ResponseDto edit(@RequestBody ${Domain}Dto ${domain}Dto) {
         // 保存校验
-     <#--   ValidatorUtil.require(${domain}Dto.getName(), "名称");
-        ValidatorUtil.require(${domain}Dto.getCourseId(), "课程ID");
-        ValidatorUtil.length(${domain}Dto.getCourseId(), "课程ID", 1, 8);-->
+        <#list fieldList as field>
+            <#if !field.nullAble && field.name != "id" && field.nameHump !="createAt" && field.nameHump !="updateAt">
+        ValidatorUtil.require(${domain}Dto.get${field.nameBigHump}(), "${field.nameCn}");
+            </#if>
+            <#if (field.length > 0)>
+        ValidatorUtil.length(${domain}Dto.get${field.nameBigHump}(), "${field.nameCn}", 1, ${field.length?c});
+            </#if>
+        </#list>
+
         ResponseDto responseDto = new ResponseDto();
         ${domain}Service.edit(${domain}Dto);
         responseDto.setContent(${domain}Dto);

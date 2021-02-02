@@ -12,48 +12,51 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 
 @RestController
-@RequestMapping("/admin/Section")
+@RequestMapping("/admin/section")
 public class SectionController {
     private static final Logger LOG = LoggerFactory.getLogger(SectionController.class);
     public static final String BUSINESS_NAME = "小节";
 
     @Resource
-    private SectionService SectionService;
+    private SectionService sectionService;
 
 
     /**
-     * 查询章节列表
+     * 查询business列表
      *
      * @param pageDto
      * @return
      */
     @RequestMapping("/list")
-    public ResponseDto Section(@RequestBody PageDto pageDto) {
+    public ResponseDto section(@RequestBody PageDto pageDto) {
         ResponseDto responseDto = new ResponseDto();
-        SectionService.list(pageDto);
+        sectionService.list(pageDto);
         responseDto.setContent(pageDto);
         return responseDto;
     }
 
     /**
-     * 新增章节
+     * 新增business
      *
-     * @param SectionDto
+     * @param sectionDto
      * @return
      */
     @RequestMapping("/save")
-    public ResponseDto save(@RequestBody SectionDto SectionDto) {
+    public ResponseDto save(@RequestBody SectionDto sectionDto) {
 
         // 保存校验
+        ValidatorUtil.require(sectionDto.getTitle(), "标题");
+        ValidatorUtil.length(sectionDto.getTitle(), "标题", 1, 50);
+        ValidatorUtil.length(sectionDto.getVideo(), "视频", 1, 200);
 
         ResponseDto responseDto = new ResponseDto();
-        SectionService.save(SectionDto);
-        responseDto.setContent(SectionDto);
+        sectionService.save(sectionDto);
+        responseDto.setContent(sectionDto);
         return responseDto;
     }
 
     /**
-     * 删除章节
+     * 删除business
      *
      * @param id
      * @return
@@ -61,7 +64,7 @@ public class SectionController {
     @DeleteMapping("/delete/{id}")
     public ResponseDto delete(@PathVariable("id") String id) {
         ResponseDto responseDto = new ResponseDto();
-        SectionService.delete(id);
+        sectionService.delete(id);
         responseDto.setContent(id);
         return responseDto;
     }
@@ -69,17 +72,21 @@ public class SectionController {
 
 
     /**
-     * 根据id修改章节
+     * 根据id修改business
      *
-     * @param SectionDto
+     * @param sectionDto
      * @return
      */
     @RequestMapping(value = "/edit")
-    public ResponseDto edit(@RequestBody SectionDto SectionDto) {
+    public ResponseDto edit(@RequestBody SectionDto sectionDto) {
         // 保存校验
+        ValidatorUtil.require(sectionDto.getTitle(), "标题");
+        ValidatorUtil.length(sectionDto.getTitle(), "标题", 1, 50);
+        ValidatorUtil.length(sectionDto.getVideo(), "视频", 1, 200);
+
         ResponseDto responseDto = new ResponseDto();
-        SectionService.edit(SectionDto);
-        responseDto.setContent(SectionDto);
+        sectionService.edit(sectionDto);
+        responseDto.setContent(sectionDto);
         return responseDto;
     }
 

@@ -16,12 +16,13 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Date;
 
 @Service
 public class SectionServiceImpl implements SectionService {
 
     @Resource
-    private SectionMapper SectionMapper;
+    private SectionMapper sectionMapper;
 
     /**
      * 查询列表
@@ -31,31 +32,35 @@ public class SectionServiceImpl implements SectionService {
     @Override
     public void list(PageDto pageDto) {
         PageHelper.startPage(pageDto.getPage(), pageDto.getSize());
-        SectionExample SectionExample = new SectionExample();
-        List<Section> SectionList = SectionMapper.selectByExample(SectionExample);
-        PageInfo<Section> pageInfo = new PageInfo<>(SectionList);
+        SectionExample sectionExample = new SectionExample();
+        sectionExample.setOrderByClause("sort asc");
+        List<Section> sectionList = sectionMapper.selectByExample(sectionExample);
+        PageInfo<Section> pageInfo = new PageInfo<>(sectionList);
         pageDto.setTotal(pageInfo.getTotal());
-        List<SectionDto> SectionDtoList = new ArrayList<SectionDto>();
-        for (int i = 0; i < SectionList.size(); i++) {
-            Section Section = SectionList.get(i);
-            SectionDto SectionDto = new SectionDto();
-            BeanUtils.copyProperties(Section, SectionDto);
-            SectionDtoList.add(SectionDto);
+        List<SectionDto> sectionDtoList = new ArrayList<SectionDto>();
+        for (int i = 0; i < sectionList.size(); i++) {
+            Section section = sectionList.get(i);
+            SectionDto sectionDto = new SectionDto();
+            BeanUtils.copyProperties(section, sectionDto);
+            sectionDtoList.add(sectionDto);
         }
-        pageDto.setList(SectionDtoList);
+        pageDto.setList(sectionDtoList);
     }
 
     /**
      * 添加章节目录
      *
-     * @param SectionDto
+     * @param sectionDto
      */
     @Override
-    public void save(SectionDto SectionDto) {
-        SectionDto.setId(UuidUtil.getShortUuid());
-        Section Section = new Section();
-        BeanUtils.copyProperties(SectionDto, Section);
-        SectionMapper.insert(Section);
+    public void save(SectionDto sectionDto) {
+        Date now = new Date();
+        sectionDto.setCreatedAt(now);
+        sectionDto.setUpdatedAt(now);
+        sectionDto.setId(UuidUtil.getShortUuid());
+        Section section = new Section();
+        BeanUtils.copyProperties(sectionDto, section);
+        sectionMapper.insert(section);
     }
 
     /**
@@ -65,20 +70,21 @@ public class SectionServiceImpl implements SectionService {
      */
     @Override
     public void delete(String id) {
-        SectionMapper.deleteByPrimaryKey(id);
+        sectionMapper.deleteByPrimaryKey(id);
     }
 
     /**
      * 根据id修改章节
      *
-     * @param SectionDto
+     * @param sectionDto
      */
     @Override
-    public void edit(SectionDto SectionDto) {
+    public void edit(SectionDto sectionDto) {
+        sectionDto.setUpdatedAt(new Date());
           /*原始方法封装Dto
-          Section Section = new Section();
-        BeanUtils.copyProperties(SectionDto, Section);*/
-        Section Section= CopyUtil.copy(SectionDto,Section.class);
-        SectionMapper.updateByPrimaryKey(Section);
+        Section section = new Section();
+        BeanUtils.copyProperties(sectionDto, section);*/
+        Section section= CopyUtil.copy(sectionDto,Section.class);
+        sectionMapper.updateByPrimaryKey(section);
     }
 }
