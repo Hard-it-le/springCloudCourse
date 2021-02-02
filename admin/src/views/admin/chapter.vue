@@ -139,7 +139,7 @@ export default {
     updateCourse() {
       let _this = this;
       Loading.show();
-      _this.$ajax.post("http://127.0.0.1:9000/business/admin/chapter/edit", {
+      _this.$ajax.post(process.env.VUE_APP_SERVER+"/business/admin/chapter/edit", {
         id: _this.course.id,
         courseId: _this.course.courseId,
         name: _this.course.name
@@ -162,7 +162,7 @@ export default {
       let _this = this;
       var id = delId;
       Loading.show();
-      _this.$ajax.delete("http://127.0.0.1:9000/business/admin/chapter/delete/" + id).then(deleteRes => {
+      _this.$ajax.delete(process.env.VUE_APP_SERVER+"/business/admin/chapter/delete/" + id).then(deleteRes => {
         Loading.hide();
         if (null != deleteRes && null != deleteRes.data && deleteRes.data.success) {
           _this.getList(1);
@@ -183,7 +183,7 @@ export default {
     saveCourse() {
       let _this = this;
       Loading.show();
-      _this.$ajax.post("http://127.0.0.1:9000/business/admin/chapter/save", {
+      _this.$ajax.post(process.env.VUE_APP_SERVER+"/business/admin/chapter/save", {
         courseId: _this.course.courseId,
         name: _this.course.name
       }).then(saveRes => {
@@ -204,7 +204,7 @@ export default {
     getList(page) {
       let _this = this;
       Loading.show();
-      _this.$ajax.post("http://127.0.0.1:9000/business/admin/chapter/list", {
+      _this.$ajax.post(process.env.VUE_APP_SERVER+"/business/admin/chapter/list", {
         page: page,
         size: _this.$refs.pagination.size,
       }).then((listRes) => {
