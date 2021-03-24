@@ -2,7 +2,7 @@ package com.course.server.config;
 
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.support.spring.PropertyPreFilters;
-import com.course.server.utils.UuidUtil;
+import com.course.server.util.UuidUtil;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.Signature;
@@ -30,12 +30,9 @@ public class LogAspect {
 
     private final static Logger LOG = LoggerFactory.getLogger(LogAspect.class);
 
-    /**
-     * 定义一个切点
-     */
+    /** 定义一个切点 */
     @Pointcut("execution(public * com.course.*.controller..*Controller.*(..))")
-    public void controllerPointcut() {
-    }
+    public void controllerPointcut() {}
 
     @Before("controllerPointcut()")
     public void doBefore(JoinPoint joinPoint) throws Throwable {
@@ -83,7 +80,7 @@ public class LogAspect {
 
         // 打印请求参数
         Object[] args = joinPoint.getArgs();
-        Object[] arguments = new Object[args.length];
+        Object[] arguments  = new Object[args.length];
         for (int i = 0; i < args.length; i++) {
             if (args[i] instanceof ServletRequest
                     || args[i] instanceof ServletResponse

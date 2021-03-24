@@ -11,14 +11,13 @@ import java.io.File;
 import java.util.*;
 
 public class ServerGenerator {
-    static  String MODULE = "business";
+    static String MODULE = "business";
+    static String toDtoPath = "server\\src\\main\\java\\com\\course\\server\\dto\\";
     static String toServicePath = "server\\src\\main\\java\\com\\course\\server\\service\\";
-    static String toServiceImplPath = "server\\src\\main\\java\\com\\course\\server\\service\\impl\\";
-    static String toControllerPath = MODULE+"\\src\\main\\java\\com\\course\\"+MODULE+"\\controller\\admin\\";
-    static  String toDtoPath = "server\\src\\main\\java\\com\\course\\server\\dto\\";
+    static String toControllerPath = MODULE + "\\src\\main\\java\\com\\course\\" + MODULE + "\\controller\\admin\\";
     static String generatorConfigPath = "server\\src\\main\\resources\\generator\\generatorConfig.xml";
-    public static void main(String[] args) throws Exception {
 
+    public static void main(String[] args) throws Exception {
         String module = MODULE;
 
         // 只生成配置文件中的第一个table节点
@@ -41,32 +40,27 @@ public class ServerGenerator {
         System.out.println("表："+tableElement.attributeValue("tableName"));
         System.out.println("Domain："+tableElement.attributeValue("domainObjectName"));
 
-        //获取所有的列信息
         List<Field> fieldList = DbUtil.getColumnByTableName(tableName);
-        //从获取里列信息获得类信息
         Set<String> typeSet = getJavaTypes(fieldList);
-        Map<String,Object> map = new HashMap<>();
-        map.put("Domain",Domain);
-        map.put("domain",domain);
-        map.put("tableNameCn",tableNameCn);
-        map.put("module",module);
-        map.put("fieldList",fieldList);
-        map.put("typeSet",typeSet);
+        Map<String, Object> map = new HashMap<>();
+        map.put("Domain", Domain);
+        map.put("domain", domain);
+        map.put("tableNameCn", tableNameCn);
+        map.put("module", module);
+        map.put("fieldList", fieldList);
+        map.put("typeSet", typeSet);
 
-        //生成service
-        FreemarkerUtil.initConfig("service.ftl");
-        FreemarkerUtil.generator(toServicePath +Domain+"Service.java",map);
-
-        //生成serviceImpl
-        FreemarkerUtil.initConfig("serviceImpl.ftl");
-        FreemarkerUtil.generator(toServiceImplPath +Domain+"ServiceImpl.java",map);
-
-        //生成Controllers
-        FreemarkerUtil.initConfig("controller.ftl");
-        FreemarkerUtil.generator(toControllerPath +Domain+"Controller.java",map);
-        //dto
+        // 生成dto
         FreemarkerUtil.initConfig("dto.ftl");
-        FreemarkerUtil.generator(toDtoPath +Domain+"Dto.java",map);
+        FreemarkerUtil.generator(toDtoPath + Domain + "Dto.java", map);
+
+        // 生成service
+        FreemarkerUtil.initConfig("service.ftl");
+        FreemarkerUtil.generator(toServicePath + Domain + "Service.java", map);
+
+        // 生成controller
+        FreemarkerUtil.initConfig("controller.ftl");
+        FreemarkerUtil.generator(toControllerPath + Domain + "Controller.java", map);
     }
 
     /**

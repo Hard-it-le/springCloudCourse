@@ -1,21 +1,10 @@
 package com.course.server.dto;
 
-
 public class ChapterDto {
-
-    /**
-     * id
-     */
     private String id;
 
-    /**
-     * 课程id
-     */
     private String courseId;
 
-    /**
-     * 名称
-     */
     private String name;
 
     public String getId() {
@@ -42,7 +31,6 @@ public class ChapterDto {
         this.name = name;
     }
 
-
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -55,5 +43,4 @@ public class ChapterDto {
         sb.append("]");
         return sb.toString();
     }
-
 }

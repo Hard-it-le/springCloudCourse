@@ -1,10 +1,10 @@
 package com.course.business.controller.admin;
 
 import com.course.server.dto.ChapterDto;
-import com.course.server.dto.PageDto;
+import com.course.server.dto.ChapterPageDto;
 import com.course.server.dto.ResponseDto;
 import com.course.server.service.ChapterService;
-import com.course.server.utils.ValidatorUtil;
+import com.course.server.util.ValidatorUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
@@ -14,37 +14,34 @@ import javax.annotation.Resource;
 @RestController
 @RequestMapping("/admin/chapter")
 public class ChapterController {
+
     private static final Logger LOG = LoggerFactory.getLogger(ChapterController.class);
     public static final String BUSINESS_NAME = "大章";
 
     @Resource
     private ChapterService chapterService;
 
-
     /**
-     * 查询business列表
-     *
-     * @param pageDto
-     * @return
+     * 列表查询
      */
-    @RequestMapping("/list")
-    public ResponseDto chapter(@RequestBody PageDto pageDto) {
+    @PostMapping("/list")
+    public ResponseDto list(@RequestBody ChapterPageDto chapterPageDto) {
         ResponseDto responseDto = new ResponseDto();
-        chapterService.list(pageDto);
-        responseDto.setContent(pageDto);
+        ValidatorUtil.require(chapterPageDto.getCourseId(), "课程ID");
+        chapterService.list(chapterPageDto);
+        responseDto.setContent(chapterPageDto);
         return responseDto;
     }
 
     /**
-     * 新增business
-     *
-     * @param chapterDto
-     * @return
+     * 保存，id有值时更新，无值时新增
      */
-    @RequestMapping("/save")
+    @PostMapping("/save")
     public ResponseDto save(@RequestBody ChapterDto chapterDto) {
-
         // 保存校验
+        ValidatorUtil.require(chapterDto.getName(), "名称");
+        ValidatorUtil.require(chapterDto.getCourseId(), "课程ID");
+        ValidatorUtil.length(chapterDto.getCourseId(), "课程ID", 1, 8);
 
         ResponseDto responseDto = new ResponseDto();
         chapterService.save(chapterDto);
@@ -53,35 +50,12 @@ public class ChapterController {
     }
 
     /**
-     * 删除business
-     *
-     * @param id
-     * @return
+     * 删除
      */
     @DeleteMapping("/delete/{id}")
-    public ResponseDto delete(@PathVariable("id") String id) {
+    public ResponseDto delete(@PathVariable String id) {
         ResponseDto responseDto = new ResponseDto();
         chapterService.delete(id);
-        responseDto.setContent(id);
         return responseDto;
     }
-
-
-
-    /**
-     * 根据id修改business
-     *
-     * @param chapterDto
-     * @return
-     */
-    @RequestMapping(value = "/edit")
-    public ResponseDto edit(@RequestBody ChapterDto chapterDto) {
-        // 保存校验
-        ResponseDto responseDto = new ResponseDto();
-        chapterService.edit(chapterDto);
-        responseDto.setContent(chapterDto);
-        return responseDto;
-    }
-
-
 }

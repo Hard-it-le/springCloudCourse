@@ -1,11 +1,23 @@
 package com.course.server.service;
 
-import com.course.server.dto.TestDto;
-import com.course.server.dto.PageDto;
+import com.course.server.domain.Test;
+import com.course.server.domain.TestExample;
+import com.course.server.mapper.TestMapper;
+import org.springframework.stereotype.Service;
 
-public interface TestService {
-      void list(PageDto pageDto);
-      void save(TestDto testDto);
-      void  delete(String id);
-      void edit(TestDto testDto);
+import javax.annotation.Resource;
+import java.util.List;
+
+@Service
+public class TestService {
+
+    @Resource
+    private TestMapper testMapper;
+
+    public List<Test> list() {
+        TestExample testExample = new TestExample();
+        testExample.createCriteria().andIdEqualTo("1");
+        testExample.setOrderByClause("id desc");
+        return testMapper.selectByExample(testExample);
+    }
 }
